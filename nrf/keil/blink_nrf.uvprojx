@@ -522,6 +522,16 @@
               <FileType>5</FileType>
               <FilePath>..\..\src\hal_WTD.h</FilePath>
             </File>
+            <File>
+              <FileName>svc_SC.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\svc_SC.c</FilePath>
+            </File>
+            <File>
+              <FileName>svc_SC.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\svc_SC.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
