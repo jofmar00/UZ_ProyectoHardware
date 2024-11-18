@@ -1,6 +1,7 @@
 #include "rt_fifo.h"
 #include "drv_monitor.h"
 #include "drv_tiempo.h"
+#include "svc_SC.h"
 
 static uint32_t id_monitor_overflow; //Pin para la gestion del overflow de la cola de eventos
 
@@ -41,7 +42,7 @@ void rt_FIFO_inicializar(uint32_t monitor_overflow) {
  * bloquea el programa.
  */
 void rt_FIFO_encolar(uint32_t ID_evento, uint32_t auxData) {
-	
+	svc_SC_entrar();
 	if(rt_FIFO_llena()) {
 		//OVERFLOW
 		drv_monitor_marcar(id_monitor_overflow);
@@ -56,6 +57,7 @@ void rt_FIFO_encolar(uint32_t ID_evento, uint32_t auxData) {
 	EVENTO newEvent = {ID_evento, auxData, drv_tiempo_actual_us()};
 	fifo_array[ultimo_encolado] = newEvent;
 	counter[ID_evento]++;
+	svc_SC_salir();
 }
 
 /*
@@ -64,8 +66,11 @@ void rt_FIFO_encolar(uint32_t ID_evento, uint32_t auxData) {
  * llamada
 */ 
 uint8_t rt_FIFO_extraer(EVENTO_T *ID_evento, uint32_t* auxData, Tiempo_us_t *TS) {
-	if(rt_FIFO_vacia()) return 0;
-	
+	svc_SC_entrar();
+	if(rt_FIFO_vacia()) {
+		svc_SC_salir();
+		return 0;
+	}	
 	
 	//Asingnacion de resultados
 	*ID_evento = fifo_array[por_desencolar].ID_EVENTO;
@@ -75,15 +80,19 @@ uint8_t rt_FIFO_extraer(EVENTO_T *ID_evento, uint32_t* auxData, Tiempo_us_t *TS)
 	if(por_desencolar == ultimo_encolado) {
 		por_desencolar = -1;
 		ultimo_encolado = -1;
+		svc_SC_salir();
 		return 1;
 	}
 	
 	por_desencolar = ((por_desencolar + 1) % FIFO_SIZE);
 
-	//Numero de eventos que quedan por procesar
-	return (por_desencolar < ultimo_encolado) ? 
+	//Numero de eventos que quedan por procesar jejeje
+	int resultadito = (por_desencolar < ultimo_encolado) ? 
 					(ultimo_encolado - por_desencolar + 1) : 
 					(por_desencolar - ultimo_encolado + 1);
+	
+	svc_SC_salir();
+	return resultadito;
 }
 
 /*

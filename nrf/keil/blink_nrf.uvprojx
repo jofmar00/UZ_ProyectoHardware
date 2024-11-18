@@ -507,6 +507,21 @@
               <FileType>5</FileType>
               <FilePath>..\..\src\drv_botones.h</FilePath>
             </File>
+            <File>
+              <FileName>drv_WTD.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\drv_WTD.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_WTD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\drv_WTD.h</FilePath>
+            </File>
+            <File>
+              <FileName>hal_WTD.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_WTD.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -546,6 +561,11 @@
               <FileName>hal_ext_int_nrf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src_nrf\hal_ext_int_nrf.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_WTD_nrf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_nrf\hal_WTD_nrf.c</FilePath>
             </File>
           </Files>
         </Group>

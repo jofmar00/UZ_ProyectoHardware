@@ -14,6 +14,7 @@ typedef enum {
 	ev_PULSAR_BOTON = 2,
 	ev_INACTIVIDAD = 3,
 	ev_BOTON_RETARDO = 4,
+	ev_TIMEOUT_LED = 5,
 } EVENTO_T;
 
 //Tipo EVENTO

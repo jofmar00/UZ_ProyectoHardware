@@ -2,6 +2,8 @@
 #include "rt_fifo.h"
 #include "drv_monitor.h"
 #include "drv_consumo.h"
+#include "drv_WTD.h"
+#include "drv_leds.h"
 #include "svc_alarma.h"
 
 	
@@ -32,6 +34,7 @@ void rt_GE_iniciar(uint32_t monitor){
 		svc_GE_suscribir(ev_VOID, rt_GE_tratar);
 		svc_GE_suscribir(ev_PULSAR_BOTON, rt_GE_tratar);
 		svc_GE_suscribir(ev_INACTIVIDAD, rt_GE_tratar);
+		svc_GE_suscribir(ev_TIMEOUT_LED, rt_GE_tratar);
 }
 
 void rt_GE_lanzador() {
@@ -45,10 +48,13 @@ void rt_GE_lanzador() {
 			Tiempo_us_t TS;
 			rt_FIFO_extraer(&evento, &auxData, &TS);
 			
+			//Alimentamos el watchdog porque sabemos que el sistema está corriendo satisfactoriamente
+			drv_WDT_alimentar();
+			
 			//Ejecutamos todas las funciones suscritas al evento
 			for (int i = 0; i < rt_GE_MAX_SUSCRITOS; i++) {
 				if(eventos_suscritos[evento][i] != NULL){
-						eventos_suscritos[evento][i](auxData);
+						eventos_suscritos[evento][i](evento, auxData);
 				}
 			} 
 		}
@@ -89,9 +95,12 @@ void rt_GE_tratar(EVENTO_T evento, uint32_t auxData) {
 			drv_consumo_dormir();
 		break;
 		case ev_PULSAR_BOTON:
-			svc_alarma_activar(svc_alarma_codificar(0, 20*1000), ev_INACTIVIDAD, 0);
+			svc_alarma_activar(svc_alarma_codificar(0, 20*1000), ev_INACTIVIDAD, 0); //Reprograma la alarma
 		break;
 		case ev_VOID:
+		break;
+		case ev_TIMEOUT_LED:
+			drv_led_apagar(auxData);
 		break;
 		default:
 		break;

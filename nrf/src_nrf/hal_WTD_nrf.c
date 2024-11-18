@@ -7,8 +7,8 @@
 //Configura un WatchDog que salta cada 'ms' segundos.
 void hal_WDT_iniciar(uint32_t sec) {
 	//Configuracion general del WatchDog.
-  //Cuando esté durmiendo el procesador sigue corriendo pero si está halted (debug mode) no corre
-	NRF_WDT->CONFIG = (WDT_CONFIG_SLEEP_Run << WDT_CONFIG_SLEEP_Pos) | 
+  //Cuando esté durmiendo el procesador no sigue corriendo y si está halted (debug mode)tampoco
+	NRF_WDT->CONFIG = (WDT_CONFIG_SLEEP_Pause << WDT_CONFIG_SLEEP_Pos) | 
 										(WDT_CONFIG_HALT_Pause << WDT_CONFIG_HALT_Pos);
 	
 	//Configuracion del counter reload value

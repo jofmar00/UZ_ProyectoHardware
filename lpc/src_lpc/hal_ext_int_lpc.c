@@ -2,8 +2,19 @@
 #include "hal_ext_int.h"
 
 //TODO
-void hal_ext_int_iniciar(uint32_t pin);
-void hal_ext_int_habilitar_int(uint32_t pin);
-void hal_ext_int_deshabilitar_int(uint32_t pin);
-void hal_ext_int_habilitar_despertar(uint32_t pin);
-void hal_ext_int_deshabilitar_despertar(uint32_t pin);
+void hal_ext_int_iniciar(uint32_t pin, void (*f_callback)()) {
+	EXTINT = EXTINT | 1;
+}
+
+void hal_ext_int_habilitar_int(uint32_t pin) {
+
+}
+void hal_ext_int_deshabilitar_int(uint32_t pin) {
+
+}
+void hal_ext_int_habilitar_despertar(uint32_t pin) {
+
+}
+void hal_ext_int_deshabilitar_despertar(uint32_t pin) {
+
+}
