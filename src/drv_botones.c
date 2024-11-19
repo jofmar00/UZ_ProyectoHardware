@@ -33,7 +33,7 @@ void drv_botones_tratar(EVENTO_T evento, uint32_t auxData) {
 			estado_boton = ENTRANDO;
 		break;
 		case ENTRANDO:
-			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
+			svc_alarma_activar(TEP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
 			estado_boton = ESPERANDO;
 		break;
 		case ESPERANDO:

@@ -103,5 +103,3 @@ void hal_tiempo_reloj_periodico_tick(uint32_t periodo_en_tick, void(*funcion_cal
     VICIntEnClr = 0x20;                     // Disable Timer1 Interrupt		
 	}
 }
-
-

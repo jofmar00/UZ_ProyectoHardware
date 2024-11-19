@@ -109,6 +109,3 @@ void hal_gpio_escribir(HAL_GPIO_PIN_T gpio, uint32_t valor){
 	if ((valor & 0x01) == 0) IOCLR = masc;
 	else IOSET = masc;
 }
-
-
-

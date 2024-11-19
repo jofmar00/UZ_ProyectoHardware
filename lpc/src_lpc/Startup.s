@@ -1,5 +1,5 @@
 ;/*****************************************************************************/
-;/* STARTUP.S: Startup file for Philips LPC2000                               */
+;/* STARTUP.S: Startup file for Blinky Example  By Kike 2024                  */
 ;/*****************************************************************************/
 ;/* <<< Use Configuration Wizard in Context Menu >>>                          */ 
 ;/*****************************************************************************/
@@ -58,7 +58,7 @@ F_Bit           EQU     0x40            ; when F bit is set, FIQ is disabled
 ;// </h>
 
 UND_Stack_Size  EQU     0x00000000
-SVC_Stack_Size  EQU     0x00000008
+SVC_Stack_Size  EQU     0x00000400
 ABT_Stack_Size  EQU     0x00000000
 FIQ_Stack_Size  EQU     0x00000000
 IRQ_Stack_Size  EQU     0x00000080
@@ -246,6 +246,8 @@ Vectors         LDR     PC, Reset_Addr
                 LDR     PC, [PC, #-0x0FF0]     ; Vector from VicVectAddr
                 LDR     PC, FIQ_Addr
 
+;            IMPORT SWI_Handler
+				
 Reset_Addr      DCD     Reset_Handler
 Undef_Addr      DCD     Undef_Handler
 SWI_Addr        DCD     SWI_Handler
@@ -438,5 +440,29 @@ __user_initial_stackheap
                 BX      LR
                 ENDIF
 
+                EXPORT      switch_to_PLL
+switch_to_PLL 
+                LDR     R0, =PLL_BASE
+                MOV     R1, #0xAA
+                MOV     R2, #0x55
+
+                ;  Configure and Enable PLL
+                MOV     R3, #PLLCFG_Val
+                STR     R3, [R0, #PLLCFG_OFS] 
+                MOV     R3, #PLLCON_PLLE
+                STR     R3, [R0, #PLLCON_OFS]
+                STR     R1, [R0, #PLLFEED_OFS]
+                STR     R2, [R0, #PLLFEED_OFS]
+;  Wait until PLL Locked
+PLL_Loop2       LDR     R3, [R0, #PLLSTAT_OFS]
+                ANDS    R3, R3, #PLLSTAT_PLOCK
+                BEQ     PLL_Loop2
+
+;  Switch to PLL Clock
+                MOV     R3, #(PLLCON_PLLE:OR:PLLCON_PLLC)
+                STR     R3, [R0, #PLLCON_OFS]
+                STR     R1, [R0, #PLLFEED_OFS]
+                STR     R2, [R0, #PLLFEED_OFS]
+                BX      LR
 
                 END

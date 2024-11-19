@@ -29,6 +29,10 @@
 #define BUTTON_2       (INT_EXT2)
 #define BUTTON_3       (INT_EXT3)
 
+#define BUTTONS_LIST { BUTTON_1, BUTTON_2, BUTTON_3 }
+
+#define BUTTONS_ACTIVE_STATE 0
+
 //MONITOR
 #define MONITOR_NUMBER 4
 
