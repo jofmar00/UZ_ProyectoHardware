@@ -44,16 +44,30 @@ void boton_pulsar_counter_strike(EVENTO_T evento, uint32_t auxData){
 		svc_alarma_activar(0, ev_TIMEOUT_LED, id_led);
 	}
 }
-	
-	
+
+void apagarLed() {
+	drv_led_apagar(id_led);
+}
+
+void siguienteLed() {
+	id_led = (id_led + 1) % BUTTONS_NUMBER;
+	drv_led_encender(id_led);
+}
+
+
 void bit_counter_strike(){
-	while(1) {
+	//svc_GE_suscribir(ev_PULSAR_BOTON, boton_pulsar_counter_strike);
+	svc_GE_suscribir(ev_TIMEOUT_LED, apagarLed);
+	svc_GE_suscribir(ev_TIMEOUT_LED, siguienteLed);
+	svc_alarma_activar(0x80000000 | 3000, ev_TIMEOUT_LED, 0); //Alarma periodica
+	rt_GE_lanzador();
+	/*while(1) {
 		drv_led_encender(id_led);
 		svc_alarma_activar(3000, ev_TIMEOUT_LED, id_led);
 		
 		drv_consumo_esperar(); //O me interrumpe la alarma o el botón 
 		id_led = (id_led + 1) % LEDS_NUMBER;
-	}
+	}*/
 }
 
 /* *****************************************************************************
@@ -74,9 +88,9 @@ int main(void){
 	drv_consumo_iniciar(1);
 	drv_botones_iniciar(rt_FIFO_encolar, ev_PULSAR_BOTON, ev_BOTON_RETARDO);
 	svc_alarma_iniciar(2, rt_FIFO_encolar, ev_T_PERIODICO);
-	svc_GE_suscribir(ev_PULSAR_BOTON, boton_pulsar_counter_strike);
-	
+	/*
 	if (Num_Leds > 0){
 		blink_v3_bis(3);
-	}
+	}*/
+	bit_counter_strike();
 }
