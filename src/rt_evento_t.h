@@ -10,11 +10,10 @@ typedef uint64_t Tiempo_us_t;
 //Tipos de eventos EVENTO_T
 typedef enum {
 	ev_VOID = 0,
-	ev_T_PERIODICO = 1,
-	ev_PULSAR_BOTON = 2,
-	ev_INACTIVIDAD = 3,
-	ev_BOTON_RETARDO = 4,
-	ev_TIMEOUT_LED = 5,
+	ev_T_PERIODICO = 1, 				// Encola otros eventos
+	ev_PULSAR_BOTON = 2,				// Actualiza seq. introducida por el user
+	ev_INACTIVIDAD = 3,					// Duerme a la CPU, cada vez será mas frecuente para dar menos tiempo al user a pulsar botones
+	ev_BOTON_RETARDO = 4,				// Gestiona los rebotes de los botones
 } EVENTO_T;
 
 //Tipo EVENTO

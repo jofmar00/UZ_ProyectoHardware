@@ -99,9 +99,6 @@ void rt_GE_tratar(EVENTO_T evento, uint32_t auxData) {
 		break;
 		case ev_VOID:
 		break;
-		case ev_TIMEOUT_LED:
-			drv_led_apagar(auxData);
-		break;
 		default:
 		break;
 	} 

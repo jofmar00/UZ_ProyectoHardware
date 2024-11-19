@@ -24,6 +24,7 @@
  * inicializa los led, los deja apagados y devuelve el numero de leds disponibles en la plataforma
  */
 uint32_t drv_leds_iniciar(){
+	hal_gpio_iniciar();
 	#if LEDS_NUMBER > 0
 		for (uint32_t i = 0; i < LEDS_NUMBER; ++i) 			{
 			hal_gpio_sentido(led_list[i], HAL_GPIO_PIN_DIR_OUTPUT);

@@ -18,42 +18,16 @@
 #include "drv_WTD.h"
 #include "svc_alarma.h"
 
+#include <stdlib.h>
+
+
 #define RETARDO_MS 500 		//retardo blink en milisegundos
-static int id_led = 0;
-
-void blink_v3_bis(uint32_t id) {
-	  rt_FIFO_inicializar(1);
-		drv_consumo_iniciar(3);
-		drv_tiempo_periodico_ms(500, drv_led_conmutar, id);
-		drv_botones_iniciar(rt_FIFO_encolar, ev_PULSAR_BOTON, ev_BOTON_RETARDO);
-		//10 CONMUTACIONES
-		for(int i = 0; i < 10; i++) {
-			drv_consumo_esperar();
-		}
-		drv_tiempo_periodico_ms(0, drv_led_conmutar, id);
-		drv_led_apagar(id);
-		
-		drv_consumo_dormir();
-		drv_led_encender(id);
-}
-
-void boton_pulsar_counter_strike(EVENTO_T evento, uint32_t auxData){
-	if (auxData == id_led){
-		drv_led_apagar(id_led);
-		//Desprograma la alarma
-		svc_alarma_activar(0, ev_TIMEOUT_LED, id_led);
-	}
-}
 	
-	
-void bit_counter_strike(){
-	while(1) {
-		drv_led_encender(id_led);
-		svc_alarma_activar(3000, ev_TIMEOUT_LED, id_led);
-		
-		drv_consumo_esperar(); //O me interrumpe la alarma o el botón 
-		id_led = (id_led + 1) % LEDS_NUMBER;
-	}
+
+void simon_jugar() {
+
+
+
 }
 
 /* *****************************************************************************
@@ -62,21 +36,16 @@ void bit_counter_strike(){
  * para la entrega final se debe incocar a blink_v2
  */
 int main(void){
-	hal_gpio_iniciar();	// llamamos a iniciar gpio antesde que lo hagan los drivers
-	
-	/* Configure LED */
-	uint32_t Num_Leds = drv_leds_iniciar();
-	
 	/* Iniciar Drivers */
-	rt_GE_iniciar(3);
+	drv_leds_iniciar();
 	drv_tiempo_iniciar();
-	drv_WDT_iniciar(21); //TODO ver si el tiempo del watchdog está bien
 	drv_consumo_iniciar(1);
+	drv_WDT_iniciar(21); //TODO ver si el tiempo del watchdog está bien
 	drv_botones_iniciar(rt_FIFO_encolar, ev_PULSAR_BOTON, ev_BOTON_RETARDO);
-	svc_alarma_iniciar(2, rt_FIFO_encolar, ev_T_PERIODICO);
-	svc_GE_suscribir(ev_PULSAR_BOTON, boton_pulsar_counter_strike);
 	
-	if (Num_Leds > 0){
-		blink_v3_bis(3);
-	}
+	/* Iniciar Servicios */
+	rt_GE_iniciar(1);
+	svc_alarma_iniciar(2, rt_FIFO_encolar, ev_T_PERIODICO);
+	
+	
 }
