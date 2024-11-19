@@ -51,7 +51,7 @@ void svc_alarma_activar(uint32_t retardo_ms, EVENTO_T ID_evento, uint32_t auxDat
 	
 	//Caso normal
 	uint32_t masc = 0x1 << 31;
-	int periodica = (retardo_ms & masc);
+	int periodica = (retardo_ms & masc) >> 31;
 	int hueco = -1;
 	for (int i = 0; i < svc_ALARMAS_MAX; i++) {
 		//Reprogramamos el evento
@@ -98,12 +98,12 @@ void svc_alarma_tratar(EVENTO_T ID_evento, uint32_t auxData) {
 										alarm_list[i].activa = 0;
 								}
 							}
-						}							
+						}					
+					}
 			break;
 			default:
 			break;
 		}
-	}
 }
 
 uint32_t svc_alarma_codificar(uint32_t periodica, uint32_t ms) {

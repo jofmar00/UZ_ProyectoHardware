@@ -13,7 +13,7 @@
 /*** DEFINICIONES DE TIPOS ***/
 typedef struct {
 		uint8_t activa;
-    uint32_t retardo_ms;
+    int32_t retardo_ms;
     uint8_t periodica;
     EVENTO_T ID_evento;
     uint32_t auxData;

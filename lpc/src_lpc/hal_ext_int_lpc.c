@@ -9,22 +9,28 @@ static void (*callback)();
 //Boton pin 16 - Boton 1
 void eint0_ISR (void) __irq {
 	callback(ev_PULSAR_BOTON, 0);
+	hal_ext_int_deshabilitar_int(14);
 	EXTINT |= 1;						// Clear interrupt flag
 	VICVectAddr = 0;        // Acknowledge Interrupt
+	
 }
 
 //Boton pin 14 - Boton 2
 void eint1_ISR (void) __irq {
 	callback(ev_PULSAR_BOTON, 1);
+	hal_ext_int_deshabilitar_int(15);
 	EXTINT |= 2;						// Clear interrupt flag
 	VICVectAddr = 0;        // Acknowledge Interrupt
+	
 }
 
 //Boton pin 15 - Boton 3
 void eint2_ISR (void) __irq {
 	callback(ev_PULSAR_BOTON, 2);
+	hal_ext_int_deshabilitar_int(16);
 	EXTINT |= 4;						// Clear interrupt flag
 	VICVectAddr = 0;        // Acknowledge Interrupt
+	
 }
 
 //TODO
