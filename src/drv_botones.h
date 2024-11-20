@@ -8,7 +8,7 @@ void drv_botones_iniciar(void (*f_callback)(), EVENTO_T evento1, EVENTO_T evento
 void drv_botones_tratar();
 
 /*** DEFINICION DE CONSTANTES ***/
-#define TRP 30
-#define TEP 30
-#define TRD 30
+#define TRP 50
+#define TEP 50
+#define TRD 50
 #endif

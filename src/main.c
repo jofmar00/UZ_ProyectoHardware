@@ -20,6 +20,7 @@
 
 #define RETARDO_MS 500 		//retardo blink en milisegundos
 static int id_led = 0;
+static int n_leds_juego = (BUTTONS_NUMBER < LEDS_NUMBER) ? BUTTONS_NUMBER : LEDS_NUMBER; //menor entre numero de botones y de leds
 
 void blink_v3_bis(uint32_t id) {
 	  rt_FIFO_inicializar(1);
@@ -41,10 +42,10 @@ void boton_pulsar_counter_strike(EVENTO_T evento, uint32_t auxData){
 	if (auxData == id_led){
 		drv_led_apagar(id_led + 1);
 		//Enciende el nuevo led
-		id_led = (id_led + 1) % BUTTONS_NUMBER;
+		id_led = (id_led + 1) % n_leds_juego;
 		drv_led_encender(id_led + 1);
 		//Reprograma la alarma
-		svc_alarma_activar(svc_alarma_codificar(1, 600), ev_TIMEOUT_LED, id_led);
+		svc_alarma_activar(svc_alarma_codificar(1, 400), ev_TIMEOUT_LED, id_led);
 	}
 }
 
@@ -53,7 +54,7 @@ void apagarLed() {
 }
 
 void siguienteLed() {
-	id_led = (id_led + 1) % BUTTONS_NUMBER;
+	id_led = (id_led + 1) % n_leds_juego;
 	drv_led_encender(id_led + 1);
 }
 
@@ -62,7 +63,7 @@ void bit_counter_strike(){
 	svc_GE_suscribir(ev_PULSAR_BOTON, boton_pulsar_counter_strike);
 	svc_GE_suscribir(ev_TIMEOUT_LED, apagarLed);
 	svc_GE_suscribir(ev_TIMEOUT_LED, siguienteLed);
-	svc_alarma_activar(svc_alarma_codificar(1, 600), ev_TIMEOUT_LED, 0); //Alarma periodica
+	svc_alarma_activar(svc_alarma_codificar(1, 400), ev_TIMEOUT_LED, 0); //Alarma periodica
 	rt_GE_lanzador();
 	/*while(1) {
 		drv_led_encender(id_led);

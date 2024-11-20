@@ -36,7 +36,7 @@ void svc_alarma_activar(uint32_t retardo_ms, EVENTO_T ID_evento, uint32_t auxDat
 	//Desprogramar la alarma
 	if (retardo_ms == 0) {
 		for (int i = 0; i < svc_ALARMAS_MAX; i++) {
-			if(alarm_list[i].ID_evento == ID_evento && alarm_list[i].auxData == auxData) {
+			if(alarm_list[i].ID_evento == ID_evento /*&& alarm_list[i].auxData == auxData*/) {
 				alarm_list[i].activa = 0;
 				alarm_list[i].ID_evento = ev_VOID;
 				return;

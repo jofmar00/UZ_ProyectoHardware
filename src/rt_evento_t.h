@@ -26,7 +26,7 @@ typedef struct {
 
 
 /*** DEFINICIONES DE CONSTANTES ***/
-#define EVENT_TYPES 4
+#define EVENT_TYPES 6
 #define ev_NUM_EV_USUARIO 1
 #define ev_USUARIO {ev_PULSAR_BOTON}
 #if ev_NUM_EV_USUARIO > 0

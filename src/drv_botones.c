@@ -29,6 +29,15 @@ void drv_botones_iniciar(void (*f_callback)(), EVENTO_T evento_pulsar_boton, EVE
 void drv_botones_tratar(EVENTO_T evento, uint32_t auxData) {
 	switch(estado_boton) {
 		case REPOSO:
+			if(auxData == 0) {
+				auxData = 16;
+			}
+			if (auxData == 1) {
+				auxData = 14;
+			}
+			if (auxData == 2) {
+				auxData = 15;
+			}
 			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
 			estado_boton = ENTRANDO;
 		break;
