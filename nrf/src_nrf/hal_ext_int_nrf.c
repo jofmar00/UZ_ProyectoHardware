@@ -76,5 +76,23 @@ void GPIOTE_IRQHandler() {
 					break;
 			}
 		}
-		callback(ev_PULSAR_BOTON, button_gpio);
+		hal_ext_int_deshabilitar_int(button_gpio);
+		//CODIFICACION 16b pin_led - 16b pin_boton
+		switch(button_gpio) {
+			case 11:
+				led = 0;
+			break;
+			case 12:
+				led = 1;
+			break;
+			case 24:
+				led = 2;
+			break;
+			case 25:
+				led = 3;
+			break;
+		}
+		uint32_t auxData = led << 16;
+		auxData |= button_gpio;
+		callback(ev_PULSAR_BOTON, auxData);
 }

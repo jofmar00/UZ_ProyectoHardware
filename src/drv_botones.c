@@ -4,6 +4,7 @@
 #include "svc_alarma.h"
 #include "hal_gpio.h"
 #include "board.h"
+#include <stdint.h>
 
 /*** VARIABLES ESTATICAS ***/
 #if BUTTONS_NUMBER > 0
@@ -27,35 +28,29 @@ void drv_botones_iniciar(void (*f_callback)(), EVENTO_T evento_pulsar_boton, EVE
 
 //Nos tienen que llamar a esta funcion con auxData siendo el gpio del boton que quieren gestionar.
 void drv_botones_tratar(EVENTO_T evento, uint32_t auxData) {
+	//CODIFICACION AUXDATA: 16b pin_led - 16b pin_boton
+	uint32_t masc_boton = 0x0000ffff;
+	uint32_t pin_boton = auxData & masc_boton;
 	switch(estado_boton) {
 		case REPOSO:
-			if(auxData == 0) {
-				auxData = 16;
-			}
-			if (auxData == 1) {
-				auxData = 14;
-			}
-			if (auxData == 2) {
-				auxData = 15;
-			}
-			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
+			svc_alarma_activar(TRP, ev_BOTON_RETARDO, pin_boton); //AuxData es el numero del led 
 			estado_boton = ENTRANDO;
 		break;
 		case ENTRANDO:
-			svc_alarma_activar(TEP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
+			svc_alarma_activar(TEP, ev_BOTON_RETARDO, pin_boton); //AuxData es el numero del led 
 			estado_boton = ESPERANDO;
 		break;
 		case ESPERANDO:
 			if( hal_gpio_leer(auxData) == BUTTONS_ACTIVE_STATE) {
-					svc_alarma_activar(TEP, ev_BOTON_RETARDO, auxData);
+					svc_alarma_activar(TEP, ev_BOTON_RETARDO, pin_boton);
 			}
 			else {
 					estado_boton = SOLTANDO;
-					svc_alarma_activar(TRD, ev_BOTON_RETARDO, auxData);
+					svc_alarma_activar(TRD, ev_BOTON_RETARDO, pin_boton);
 			}
 		break;
 		case SOLTANDO:
-			hal_ext_int_habilitar_int(auxData);
+			hal_ext_int_habilitar_int(pin_boton);
 			estado_boton = REPOSO;
 		break;
 		return;
