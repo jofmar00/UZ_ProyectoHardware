@@ -41,7 +41,8 @@ void hal_gpio_sentido_n(HAL_GPIO_PIN_T gpio_inicial,
 															(GPIO_PIN_CNF_DRIVE_S0S1 << GPIO_PIN_CNF_DRIVE_Pos) |
 															(GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos) |
 															(GPIO_PIN_CNF_PULL_Disabled << GPIO_PIN_CNF_PULL_Pos) |
-															(GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos);
+															(GPIO_PIN_CNF_SENSE_Disabled << GPIO_PIN_CNF_SENSE_Pos) |
+															(GPIO_PIN_CNF_INPUT_Connect << GPIO_PIN_CNF_INPUT_Pos);
 			}
 		}		
 }												
@@ -100,7 +101,7 @@ void hal_gpio_sentido(HAL_GPIO_PIN_T gpio, hal_gpio_pin_dir_t direccion){
  */
 uint32_t hal_gpio_leer(HAL_GPIO_PIN_T gpio){
 		uint32_t masc = (1UL << gpio);
-		return ((NRF_GPIO->OUT & masc) != 0);
+		return ((NRF_GPIO->IN & masc) != 0);
 }
 
 

@@ -51,9 +51,6 @@ void boton_pulsar_counter_strike(EVENTO_T evento, uint32_t auxData){
 	}
 }
 
-void apagarLed() {
-	
-}
 
 void siguienteLed() {
 	drv_led_apagar(id_led + 1);
@@ -64,7 +61,6 @@ void siguienteLed() {
 
 void bit_counter_strike(){
 	svc_GE_suscribir(ev_PULSAR_BOTON, boton_pulsar_counter_strike);
-	svc_GE_suscribir(ev_TIMEOUT_LED, apagarLed);
 	svc_GE_suscribir(ev_TIMEOUT_LED, siguienteLed);
 	svc_alarma_activar(svc_alarma_codificar(1, 300), ev_TIMEOUT_LED, 0); //Alarma periodica
 	rt_GE_lanzador();

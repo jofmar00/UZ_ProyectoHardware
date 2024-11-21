@@ -2,7 +2,6 @@
  * P.H.2024
  */
  
-#include "rt_evento_t.h"
 #include "hal_ext_int.h"
 #include <nrf.h>
 
@@ -11,7 +10,7 @@ static void (*callback)();
 //Aqui guardamos en indice i, el numero del pin del GPIOTE que está relacionado con el GPIO[i]
 static int gpio_to_gpiote[32];
 //Variable para ir asignando gpiotes en orden de llegada
-static int gpiote_iterator = 0;
+static int gpiote_iterator = 4;
 
 /*** FUNCIONES ***/
 
@@ -32,7 +31,7 @@ void hal_ext_int_iniciar(uint32_t pin, void (*f_callback)()) {
 	//Guardamos que el gpio pin esta relacionado con el gpiote 'gpiote_iterator'
 	gpio_to_gpiote[pin] = gpiote_iterator;
 	gpiote_iterator++;
-	//NVIC_EnableIRQ(GPIOTE_IRQn);
+	NVIC_EnableIRQ(GPIOTE_IRQn);
 }
 //Habilita las interrupciones de los botones
 void hal_ext_int_habilitar_int(uint32_t pin){
@@ -78,21 +77,22 @@ void GPIOTE_IRQHandler() {
 		}
 		hal_ext_int_deshabilitar_int(button_gpio);
 		//CODIFICACION 16b pin_led - 16b pin_boton
+		int led_encender;
 		switch(button_gpio) {
 			case 11:
-				led = 0;
+				led_encender = 0;
 			break;
 			case 12:
-				led = 1;
+				led_encender = 1;
 			break;
 			case 24:
-				led = 2;
+				led_encender = 2;
 			break;
 			case 25:
-				led = 3;
+				led_encender = 3;
 			break;
 		}
-		uint32_t auxData = led << 16;
+		uint32_t auxData = led_encender << 16;
 		auxData |= button_gpio;
-		callback(ev_PULSAR_BOTON, auxData);
+		callback(2, auxData); //EV_PULSAR_BOTON = 2
 }
