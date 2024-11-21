@@ -25,7 +25,7 @@ void hal_ext_int_iniciar(uint32_t pin, void (*f_callback)()) {
 	
 	//Relaciona el pin que nos pasan como parametro con un evento que saltará, manejado por el GPIOTE correspondiente
 	NRF_GPIOTE->CONFIG[gpiote_iterator] = (GPIOTE_CONFIG_MODE_Event << GPIOTE_CONFIG_MODE_Pos) |
-																				(GPIOTE_CONFIG_POLARITY_Toggle << GPIOTE_CONFIG_POLARITY_Pos ) |
+																				(GPIOTE_CONFIG_POLARITY_HiToLo << GPIOTE_CONFIG_POLARITY_Pos ) |
 																				(pin << GPIOTE_CONFIG_PSEL_Pos);
 	
 	//Guardamos que el gpio pin esta relacionado con el gpiote 'gpiote_iterator'
