@@ -541,6 +541,21 @@
               <FileType>1</FileType>
               <FilePath>..\..\src\drv_botones.c</FilePath>
             </File>
+            <File>
+              <FileName>hal_rng.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_rng.h</FilePath>
+            </File>
+            <File>
+              <FileName>drv_rng.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\drv_rng.h</FilePath>
+            </File>
+            <File>
+              <FileName>drv_rng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\drv_rng.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -580,6 +595,11 @@
               <FileName>hal_WTD_lpc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src_lpc\hal_WTD_lpc.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_rng_lpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_lpc\hal_rng_lpc.c</FilePath>
             </File>
           </Files>
         </Group>

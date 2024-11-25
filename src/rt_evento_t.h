@@ -17,6 +17,9 @@ typedef enum {
 	ev_SIMON_SUCCESS = 5,
 	ev_SIMON_FAIL = 6,
 	ev_SIMON_TRATAR_ESTADO = 7,
+	ev_SIMON_EFECTO_PARPADEO = 8,
+	ev_SIMON_EFECTO_CARACOL = 9,
+	ev_MOSTRAR_SECUENCIA = 10,
 } EVENTO_T;
 
 //Tipo EVENTO
@@ -28,7 +31,7 @@ typedef struct {
 
 
 /*** DEFINICIONES DE CONSTANTES ***/
-#define EVENT_TYPES 8
+#define EVENT_TYPES 9
 #define ev_NUM_EV_USUARIO 1
 #define ev_USUARIO {ev_PULSAR_BOTON}
 #if ev_NUM_EV_USUARIO > 0

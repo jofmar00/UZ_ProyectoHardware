@@ -4,15 +4,18 @@
  #include "drv_leds.h"
  #include "drv_consumo.h"
  #include "drv_tiempo.h"
+ #include "drv_rng.h"
  #include "rt_evento_t.h"
  #include "simon.h"
  #include "svc_alarma.h"
  #include "rt_GE.h"
+ #include "rt_FIFO.h"
  
  
  static _GameState estado;
+ static uint32_t tiempo_referencia_inicial = 1000;
  static uint32_t ronda;
- static uint32_t dificultad;
+ static uint32_t dificultad = 1;
  static uint32_t num_botones_pulsados;
  static uint32_t user_input[MAX_TURNOS_SIMON];
  static uint64_t secuencia_random;
@@ -21,27 +24,33 @@
  
  
  /*** FUNCIONES AUXILIARES ***/
-void simon_leds_conmutar_todos(void) {
+void simon_leds_efecto_parpadeo(void) {
 	static int contador_blink_success = 0;
 	for(int i = 0; i < LEDS_NUMBER; i++) {
 			drv_led_conmutar(i);
 	}
 	if (contador_blink_success < 3) {
-			svc_GE_suscribir(300, simon_leds_conmutar_todos);
+			svc_alarma_activar(tiempo_referencia_inicial / dificultad, ev_SIMON_EFECTO_PARPADEO, 0);
 	}
 	contador_blink_success = (contador_blink_success + 1) % 4;
 }
 
-void simon_leds_conmutar_uno(void) {
-	static int contador_blink_fail = 0;
-	static int orden_leds_efecto_giro[] = {1, 3, 4, 2}
+
+void simon_leds_efecto_caracol(void) {
+	static int contador_blink_efecto_caracol = 0;
+	static int orden_leds_efecto_caracol[] = {1, 3, 4, 2};
 	
-	drv_led_conmutar(orden_leds_efecto_giro[i]);
-	if (contador_blink_fail < 7) {
-			svc_GE_suscribir(300, simon_leds_conmutar_todos);
+	drv_led_conmutar(orden_leds_efecto_caracol[contador_blink_efecto_caracol % LEDS_NUMBER]);
+	if (contador_blink_efecto_caracol < LEDS_NUMBER*4) {
+			svc_alarma_activar(300, ev_SIMON_EFECTO_CARACOL, 0);
+			contador_blink_efecto_caracol++;
+	}	
+	else {
+		contador_blink_efecto_caracol = 0;
 	}
-	contador_blink_fail = (contador_blink_fail + 1) % 4;
 }
+
+
 /* Funcion que suscribiremos al evento ev_PULSAR_BOTON para 
  * ir guardando las pulsaciones del usuario en memoria */
 void simon_tratar_botones( EVENTO_T evento, uint32_t auxData) {
@@ -56,19 +65,27 @@ uint32_t simon_obtener_num_actual(uint64_t secuencia, uint32_t posicion) {
 			return secuencia_shifted & 0b11;
 }
 
- void simon_mostrar_secuencia_actual(uint64_t secuencia, uint32_t ronda) {
-	uint32_t num_actual = 0;
-	 for (int i = 0; i < ronda; i++) {
-			num_actual = simon_obtener_num_actual(secuencia, i);
-			drv_led_encender(num_actual);
-			//TODO PROGRAMAR UNA ALARMA QUE NOS DESPIERTE CADA TIEMPO/DIFICULTAD SEGUNDOS
-			drv_consumo_esperar();
-		}		
+void simon_mostrar_secuencia_actual() {
+	static uint32_t contador_mostrar_secuencia = 0;
+	static uint32_t num_actual = 0;
+	static uint32_t num_siguiente = 0;
+	
+	num_actual = simon_obtener_num_actual(secuencia_random, contador_mostrar_secuencia);
+	
+	if(contador_mostrar_secuencia < ronda) {
+		num_siguiente = simon_obtener_num_actual(secuencia_random, contador_mostrar_secuencia);
+		drv_led_conmutar(num_actual);
+		drv_led_conmutar(num_siguiente);
+		svc_alarma_activar(tiempo_referencia_inicial/dificultad, ev_MOSTRAR_SECUENCIA, 0);
+	}
+	else {
+		drv_led_apagar(num_actual);
+	}
  }
  
  uint64_t simon_generar_secuencia(){
-		//TODO IMPLEMENTAR MODULO RANDOM
-		return 0;
+		drv_rng_iniciar();
+		return drv_rng_generar_numero();
  }
 	 
  
@@ -84,12 +101,8 @@ uint32_t simon_obtener_num_actual(uint64_t secuencia, uint32_t posicion) {
  /* Muestra la secuencia hasta la ronda 'ronda', va mostrando 
   * la secuencia de numeros cada vez más rapido */
  void simon_estado_show_sequence(uint32_t ronda) {
-	 for(int i = 0; i < ronda; i++) {
-			int led_actual = simon_obtener_num_actual(secuencia_random, i);
-			drv_led_encender(led_actual);
-			//TODO COMPROBAR ESPERA 
-			drv_led_apagar(led_actual);
-	 }
+	 simon_mostrar_secuencia_actual();
+	 rt_FIFO_encolar(e_WAIT_FOR_INPUT,0);	
  }
  
  /* Comprueba la entrada del usuario y devuelve
@@ -149,6 +162,7 @@ uint32_t simon_obtener_num_actual(uint64_t secuencia, uint32_t posicion) {
  
  /*** FUNCION PRINCIPAL ***/
   void simon_iniciar() {
+		
 		svc_GE_suscribir(ev_SIMON_SUCCESS, simon_leds_conmutar_todos);
 		svc_GE_suscribir(ev_SIMON_FAIL, simon_leds_conmutar_uno)
 	}

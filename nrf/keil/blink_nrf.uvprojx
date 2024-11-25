@@ -542,6 +542,11 @@
               <FileType>5</FileType>
               <FilePath>..\..\src\simon.h</FilePath>
             </File>
+            <File>
+              <FileName>hal_rng.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\..\src\hal_rng.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -586,6 +591,11 @@
               <FileName>hal_WTD_nrf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\src_nrf\hal_WTD_nrf.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_rng_nrf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\src_nrf\hal_rng_nrf.c</FilePath>
             </File>
           </Files>
         </Group>
