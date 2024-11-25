@@ -14,6 +14,9 @@ typedef enum {
 	ev_PULSAR_BOTON = 2,				// Actualiza seq. introducida por el user
 	ev_INACTIVIDAD = 3,					// Duerme a la CPU, cada vez será mas frecuente para dar menos tiempo al user a pulsar botones
 	ev_BOTON_RETARDO = 4,				// Gestiona los rebotes de los botones
+	ev_SIMON_SUCCESS = 5,
+	ev_SIMON_FAIL = 6,
+	ev_SIMON_TRATAR_ESTADO = 7,
 } EVENTO_T;
 
 //Tipo EVENTO
@@ -25,7 +28,7 @@ typedef struct {
 
 
 /*** DEFINICIONES DE CONSTANTES ***/
-#define EVENT_TYPES 4
+#define EVENT_TYPES 8
 #define ev_NUM_EV_USUARIO 1
 #define ev_USUARIO {ev_PULSAR_BOTON}
 #if ev_NUM_EV_USUARIO > 0

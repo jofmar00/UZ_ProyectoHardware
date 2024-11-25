@@ -6,6 +6,8 @@
  #include "drv_tiempo.h"
  #include "rt_evento_t.h"
  #include "simon.h"
+ #include "svc_alarma.h"
+ #include "rt_GE.h"
  
  
  static _GameState estado;
@@ -19,7 +21,27 @@
  
  
  /*** FUNCIONES AUXILIARES ***/
+void simon_leds_conmutar_todos(void) {
+	static int contador_blink_success = 0;
+	for(int i = 0; i < LEDS_NUMBER; i++) {
+			drv_led_conmutar(i);
+	}
+	if (contador_blink_success < 3) {
+			svc_GE_suscribir(300, simon_leds_conmutar_todos);
+	}
+	contador_blink_success = (contador_blink_success + 1) % 4;
+}
 
+void simon_leds_conmutar_uno(void) {
+	static int contador_blink_fail = 0;
+	static int orden_leds_efecto_giro[] = {1, 3, 4, 2}
+	
+	drv_led_conmutar(orden_leds_efecto_giro[i]);
+	if (contador_blink_fail < 7) {
+			svc_GE_suscribir(300, simon_leds_conmutar_todos);
+	}
+	contador_blink_fail = (contador_blink_fail + 1) % 4;
+}
 /* Funcion que suscribiremos al evento ev_PULSAR_BOTON para 
  * ir guardando las pulsaciones del usuario en memoria */
 void simon_tratar_botones( EVENTO_T evento, uint32_t auxData) {
@@ -50,7 +72,6 @@ uint32_t simon_obtener_num_actual(uint64_t secuencia, uint32_t posicion) {
  }
 	 
  
-
  /*** ESTADOS DE SIMON ***/
  
  /* Inicia el juego del simon */
@@ -80,25 +101,7 @@ uint32_t simon_obtener_num_actual(uint64_t secuencia, uint32_t posicion) {
  /* Muestra un doble parpadeo de todos los led como
 	  muestra de que la secuencia introducida es correcta */
  void simon_estado_success() {
-		for(int i = 0; i < LEDS_NUMBER; i++) {
-			drv_led_encender(i);
-		}
-		//TODO AVERIGUAR WAIT 0.3 S
-		for(int i = 0; i < LEDS_NUMBER; i++) {
-			drv_led_apagar(i);
-		}
-		//TODO AVERIGUAR WAIT 0.3 S
-		for(int i = 0; i < LEDS_NUMBER; i++) {
-			drv_led_encender(i);
-		}
-		//TODO AVERIGUAR WAIT 0.3 S
-		for(int i = 0; i < LEDS_NUMBER; i++) {
-			drv_led_apagar(i);
-		}
-		
-		//Aumenta la ronda y, cada 3 rondas, la dificultad 
-		ronda++;
-		if (ronda % 3  == 0) dificultad++;
+		svc_alarma_activar(300, ev_SIMON_SUCCESS, 0);
  }
  
  /* Muestra un encendido como en espiral para mostrar que la secuencia 
@@ -145,7 +148,8 @@ uint32_t simon_obtener_num_actual(uint64_t secuencia, uint32_t posicion) {
  }
  
  /*** FUNCION PRINCIPAL ***/
-  void simon_jugar() {
-	 
- }
+  void simon_iniciar() {
+		svc_GE_suscribir(ev_SIMON_SUCCESS, simon_leds_conmutar_todos);
+		svc_GE_suscribir(ev_SIMON_FAIL, simon_leds_conmutar_uno)
+	}
 	
