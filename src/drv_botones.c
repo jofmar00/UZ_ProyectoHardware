@@ -10,7 +10,11 @@
 	static const uint8_t button_list[BUTTONS_NUMBER] = BUTTONS_LIST;
 #endif
 
-static enum estados {REPOSO=0,ENTRANDO=1,ESPERANDO=2,SOLTANDO=3}estado_boton;
+static enum estados {REPOSO=0,ENTRANDO=1,ESPERANDO=2,SOLTANDO=3}estado_boton[BUTTONS_NUMBER];
+
+//ESTO HAY QUE PASARLO A SIMON.C DE ALGUNA FORMA
+static uint8_t n_pulsados = 0;
+static uint8_t pulsados[BUTTONS_NUMBER] = {};
 
 /*** FUNCIONES ***/
 
@@ -27,27 +31,40 @@ void drv_botones_iniciar(void (*f_callback)(), EVENTO_T evento_pulsar_boton, EVE
 
 //Nos tienen que llamar a esta funcion con auxData siendo el gpio del boton que quieren gestionar.
 void drv_botones_tratar(EVENTO_T evento, uint32_t auxData) {
-	switch(estado_boton) {
+	int n_boton = -1;
+	for (int i = 0; i < BUTTONS_NUMBER; i++) {
+		if (auxData == button_list[i]) {
+			n_boton = i;
+		}
+	}
+	if (n_boton == -1) {
+		return;
+	}
+	switch(estado_boton[n_boton]) {
 		case REPOSO:
-			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
-			estado_boton = ENTRANDO;
+			n_pulsados++;
+			pulsados[n_boton] = 1;
+			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del boton
+			estado_boton[n_boton] = ENTRANDO;
 		break;
 		case ENTRANDO:
-			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del led 
-			estado_boton = ESPERANDO;
+			svc_alarma_activar(TRP, ev_BOTON_RETARDO, auxData); //AuxData es el numero del boton
+			estado_boton[n_boton] = ESPERANDO;
 		break;
 		case ESPERANDO:
 			if( hal_gpio_leer(auxData) == BUTTONS_ACTIVE_STATE) {
 					svc_alarma_activar(TEP, ev_BOTON_RETARDO, auxData);
 			}
 			else {
-					estado_boton = SOLTANDO;
+					estado_boton[n_boton] = SOLTANDO;
 					svc_alarma_activar(TRD, ev_BOTON_RETARDO, auxData);
 			}
 		break;
 		case SOLTANDO:
+			n_pulsados--;
+			pulsados[n_boton] = 0;
 			hal_ext_int_habilitar_int(auxData);
-			estado_boton = REPOSO;
+			estado_boton[n_boton] = REPOSO;
 		break;
 		return;
 	}

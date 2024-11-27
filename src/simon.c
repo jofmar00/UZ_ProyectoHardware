@@ -163,7 +163,7 @@ void simon_mostrar_secuencia_actual() {
  /*** FUNCION PRINCIPAL ***/
   void simon_iniciar() {
 		
-		svc_GE_suscribir(ev_SIMON_SUCCESS, simon_leds_conmutar_todos);
-		svc_GE_suscribir(ev_SIMON_FAIL, simon_leds_conmutar_uno)
+		svc_GE_suscribir(ev_SIMON_SUCCESS, simon_leds_efecto_parpadeo);
+		svc_GE_suscribir(ev_SIMON_FAIL, simon_leds_efecto_caracol);
 	}
 	

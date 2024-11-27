@@ -2,7 +2,6 @@
  * P.H.2024
  */
  
-#include "rt_evento_t.h"
 #include "hal_ext_int.h"
 #include <nrf.h>
 
@@ -62,19 +61,20 @@ void hal_ext_int_deshabilitar_despertar(uint32_t pin) {
 
 
 void GPIOTE_IRQHandler() {
-		int button_gpiote;
+		int pin_gpiote;
 		for (int i = 0; i < 8; i++) {
 			if (NRF_GPIOTE->EVENTS_IN[i] == 1) {
 				NRF_GPIOTE->EVENTS_IN[i] = 0;
-				button_gpiote = i;
+				pin_gpiote = i;
 			}  
 		}
-		int button_gpio;
+		int pin_gpio;
 		for (int i = 0; i < 32; i++) {
-			if (gpio_to_gpiote[i] ==  button_gpiote) {
-					button_gpio = i;
+			if (gpio_to_gpiote[i] ==  pin_gpiote) {
+					pin_gpio = i;
 					break;
 			}
 		}
-		callback(ev_PULSAR_BOTON, button_gpio);
+		hal_ext_int_deshabilitar_int(pin_gpio);
+		callback(2, pin_gpio); //EV_PULSAR_BOTON = 2
 }

@@ -1,5 +1,4 @@
 #include <LPC210x.H> 
-#include "rt_evento_t.h"
 #include "hal_ext_int.h"
 #include "hal_gpio.h"
 
@@ -9,28 +8,21 @@ static void (*callback)();
 
 //Boton pin 16 - Boton 1
 void eint0_ISR (void) __irq {
-	//CODIFICACION 16b pin_led - 16b pin_boton
-	callback(ev_PULSAR_BOTON, 16); //led 0, boton 16
+	callback(2, 16); //boton 16, EV_PULSAR_BOTON = 2
 	hal_ext_int_deshabilitar_int(16);
 	VICVectAddr = 0;        // Acknowledge Interrupt
 }
 
 //Boton pin 14 - Boton 2
 void eint1_ISR (void) __irq {
-	//CODIFICACION 16b pin_led - 16b pin_boton
-	uint32_t auxData = 1 << 16;
-	auxData |= 14;
-	callback(ev_PULSAR_BOTON, auxData); //led 1, boton 14
+	callback(2, 14); //boton 14, EV_PULSAR_BOTON = 2
 	hal_ext_int_deshabilitar_int(14);
 	VICVectAddr = 0;        // Acknowledge Interrupt
 }
 
 //Boton pin 15 - Boton 3
 void eint2_ISR (void) __irq {
-	//CODIFICACION 16b pin_led - 16b pin_boton
-	uint32_t auxData = 2 << 16;
-	auxData |= 15;
-	callback(ev_PULSAR_BOTON, auxData); //led 2, boton 15
+	callback(2, 15); //boton 15, EV_PULSAR_BOTON = 2
 	hal_ext_int_deshabilitar_int(15);
 	VICVectAddr = 0;        // Acknowledge Interrupt
 }
